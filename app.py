@@ -12,7 +12,7 @@ prompt="""You are Yotube video summarizer. You will be taking the transcript tex
 and summarizing the entire video and providing the important summary in points
 within 250 words. Please provide the summary of the text given here:  """
 
-genai.configure(api_key = GOOGLE_API_KEY)
+genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
 def get_transcript(video_url):
   video_id = video_url.split("=")[-1]
