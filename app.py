@@ -15,9 +15,14 @@ within 250 words. Please provide the summary of the text given here:  """
 genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
 def get_transcript(video_url):
-  video_id = video_url.split("=")[-1]
+  vid_ids = video_url.split("=")[-1]
   # print(video_id)
-  transcript_text =  YouTubeTranscriptApi.get_transcript([video_id])
+  srt = []
+  for vid_id in vid_ids:
+    try:
+        transcript_text += [YouTubeTranscriptApi.get_transcripts([vid_id])]
+    except:
+        transcript_text += [({vid_id => []}, [])]
   # print(transcript_text)
   text = ""
   for i in transcript_text:
