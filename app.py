@@ -4,6 +4,8 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from dotenv import load_dotenv
 import os
 import google.generativeai as genai
+import requests
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -14,16 +16,29 @@ within 250 words. Please provide the summary of the text given here:  """
 
 genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
-def get_transcript(video_url):
-  video_id = video_url.split("=")[-1]
-  # print(video_id)
-  transcript_text =  YouTubeTranscriptApi.get_transcript(video_id)
-  # print(transcript_text)
-  text = ""
-  for i in transcript_text:
-    text = text + " " + i['text']
-  return text
 
+
+def get_transcript(video_url):
+    # Extract video ID from URL
+    video_id = video_url.split("v=")[-1]
+
+    # Construct URL for transcript page (example, may need adjustment)
+    transcript_url = f"https://www.youtube.com/watch?v={video_id}"
+
+    try:
+        # Send a request to the transcript page
+        response = requests.get(transcript_url)
+        response.raise_for_status()
+
+        # Parse the page content
+        soup = BeautifulSoup(response.text, 'html.parser')
+        transcript_data = soup.find_all("script", {"type": "application/json"})
+
+        # Extract transcript text (example, may need adjustment based on actual page structure)
+        transcript_text = transcript_data[0].get_text() if transcript_data else "Transcript not found"
+        return transcript_text
+    except Exception as e:
+        return f"An error occurred: {e}"
 
 def generate_gemini_content(transcript_text,prompt):
 
