@@ -16,7 +16,7 @@ genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
 def get_transcript(video_url):
   video_id = video_url.split("=")[-1]
-  transcript_text = YouTubeTranscriptApi.get_transcript(video_id, proxies={"https": "http://localhost:8080"})
+  transcript_text = YouTubeTranscriptApi.get_transcript(video_id)
 
   # print(transcript_text)
   text = ""
