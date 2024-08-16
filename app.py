@@ -4,7 +4,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from dotenv import load_dotenv
 import os
 import google.generativeai as genai
-import yt_dlp
 
 load_dotenv()
 
