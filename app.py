@@ -19,22 +19,15 @@ genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
 
 def get_transcript(video_url):
-    ydl_opts = {
-        'writesubtitles': True,
-        'subtitleslangs': ['en'],
-        'skip_download': True,
-        'outtmpl': '%(id)s.%(ext)s',
-    }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(video_url, download=False)
-        subtitles = info_dict.get('subtitles', {})
-        transcript = subtitles.get('en', [])
-        
-        # Combine transcript lines
-        transcript_text = "\n".join([entry['text'] for entry in transcript])
-        return transcript_text
-
+  video_id = video_url.split("=")[-1]
+  # print(video_id)
+  transcript_text =  YouTubeTranscriptApi.get_transcript(video_id)
+  # print(transcript_text)
+  text = ""
+  for i in transcript_text:
+    text = text + " " + i['text']
+  return text
+    
 def generate_gemini_content(transcript_text,prompt):
 
     model=genai.GenerativeModel("gemini-pro")
