@@ -15,21 +15,15 @@ within 250 words. Please provide the summary of the text given here:  """
 genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
 def get_transcript(video_url):
-    vid_id = video_url.split("=")[-1]  # Extract the video ID from the URL
-    transcript_text = []
+  video_id = video_url.split("=")[-1]
+  # print(video_id)
+  transcript_text =  YouTubeTranscriptApi.get_transcript(video_id)
+  # print(transcript_text)
+  text = ""
+  for i in transcript_text:
+    text = text + " " + i['text']
+  return text
 
-    try:
-        transcript_data = YouTubeTranscriptApi.get_transcript(vid_id)
-        transcript_text += transcript_data
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return ""  # Return empty string in case of error
-    
-    text = ""
-    for i in transcript_text:
-        text += " " + i['text']
-    
-    return text
 
 def generate_gemini_content(transcript_text,prompt):
 
