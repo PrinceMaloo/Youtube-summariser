@@ -18,7 +18,7 @@ def get_transcript(video_url):
   video_id = video_url.split("=")[-1]
   # print(video_id)
   transcript_text =  YouTubeTranscriptApi.get_transcript(video_id)
-  # print(transcript_text)
+  print(transcript_text)
   text = ""
   for i in transcript_text:
     text = text + " " + i['text']
