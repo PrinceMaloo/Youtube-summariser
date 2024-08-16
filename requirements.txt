@@ -2,4 +2,3 @@ streamlit
 youtube-transcript-api
 python-dotenv
 google-generativeai
-yt_dlp
