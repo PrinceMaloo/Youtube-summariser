@@ -4,8 +4,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from dotenv import load_dotenv
 import os
 import google.generativeai as genai
-import requests
-from bs4 import BeautifulSoup
+import yt_dlp
 
 load_dotenv()
 
@@ -18,27 +17,23 @@ genai.configure(api_key = os.getenv("GOOGLE_API_KEY"))
 
 
 
+
 def get_transcript(video_url):
-    # Extract video ID from URL
-    video_id = video_url.split("v=")[-1]
+    ydl_opts = {
+        'writesubtitles': True,
+        'subtitleslangs': ['en'],
+        'skip_download': True,
+        'outtmpl': '%(id)s.%(ext)s',
+    }
 
-    # Construct URL for transcript page (example, may need adjustment)
-    transcript_url = f"https://www.youtube.com/watch?v={video_id}"
-
-    try:
-        # Send a request to the transcript page
-        response = requests.get(transcript_url)
-        response.raise_for_status()
-
-        # Parse the page content
-        soup = BeautifulSoup(response.text, 'html.parser')
-        transcript_data = soup.find_all("script", {"type": "application/json"})
-
-        # Extract transcript text (example, may need adjustment based on actual page structure)
-        transcript_text = transcript_data[0].get_text() if transcript_data else "Transcript not found"
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(video_url, download=False)
+        subtitles = info_dict.get('subtitles', {})
+        transcript = subtitles.get('en', [])
+        
+        # Combine transcript lines
+        transcript_text = "\n".join([entry['text'] for entry in transcript])
         return transcript_text
-    except Exception as e:
-        return f"An error occurred: {e}"
 
 def generate_gemini_content(transcript_text,prompt):
 
